@@ -41,8 +41,8 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
     if (type.code === 'TC' || type.code === 'hurricane') {
       return 'http://icons.iconarchive.com/icons/custom-icon-design/lovely-weather-2/32/Hurricane-icon.png';
     } else if (type.code === 'VO' || type.code === 'volcano') {
-      return 'http://i.imgur.com/zBtppsH.png';
-    } else if (type.code === 'WF' || type.code === 'wild fire') {
+      return 'http://orig13.deviantart.net/5cea/f/2010/206/9/9/free_volcano_icon_by_mikoroh.gif';
+    } else if (type.code === 'WF' || type.code === 'wild fire' || type.code === 'FR') {
       return 'http://i572.photobucket.com/albums/ss164/sofidius/inside%20the%20fire/50px-Fire-icon-1.png';
     } else if (type.code === 'CW' || type.code === 'cold wave') {
       return 'http://icons.iconarchive.com/icons/icons8/christmas-flat-color/48/snowflake-icon.png';
@@ -54,6 +54,8 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
       return 'http://icons.iconarchive.com/icons/icons8/windows-8/48/Weather-Storm-icon.png';
     } else if (type == 'tornado') {
       return "http://icons.iconarchive.com/icons/icons8/windows-8/24/Weather-Tornado-icon.png";
+    } else if(type.code === 'EP') {
+      return 'http://icons.iconarchive.com/icons/icons8/windows-8/48/Industry-Biohazard-icon.png'
     } else {
       return 'http://icons.iconarchive.com/icons/aha-soft/free-3d-glossy/48/Disaster-Bolt-icon.png';
     }
