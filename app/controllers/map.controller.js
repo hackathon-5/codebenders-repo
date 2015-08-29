@@ -45,19 +45,19 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
     } else if (type.code === 'WF' || type.code === 'wild fire' || type.code === 'FR') {
       return 'http://i572.photobucket.com/albums/ss164/sofidius/inside%20the%20fire/50px-Fire-icon-1.png';
     } else if (type.code === 'CW' || type.code === 'cold wave') {
-      return 'http://icons.iconarchive.com/icons/icons8/christmas-flat-color/48/snowflake-icon.png';
+      return 'http://icons.iconarchive.com/icons/icons8/christmas-flat-color/24/snowflake-icon.png';
     } else if (type.code === ('FL' || 'FF') || type.code === 'flood') {
       return 'http://icons.iconarchive.com/icons/icons8/ios7/24/Weather-Floods-icon.png';
     } else if (type.code === 'EQ' || type.code === 'earthquake') {
       return 'http://icons.iconarchive.com/icons/icons8/ios7/24/Weather-Earthquakes-icon.png';
     } else if (type.code === 'ST' || type.code === 'severe storm') {
-      return 'http://icons.iconarchive.com/icons/icons8/windows-8/48/Weather-Storm-icon.png';
+      return 'http://icons.iconarchive.com/icons/icons8/windows-8/24/Weather-Storm-icon.png';
     } else if (type == 'tornado') {
       return "http://icons.iconarchive.com/icons/icons8/windows-8/24/Weather-Tornado-icon.png";
     } else if(type.code === 'EP') {
-      return 'http://icons.iconarchive.com/icons/icons8/windows-8/48/Industry-Biohazard-icon.png'
+      return 'http://icons.iconarchive.com/icons/icons8/windows-8/24/Industry-Biohazard-icon.png'
     } else {
-      return 'http://icons.iconarchive.com/icons/aha-soft/free-3d-glossy/48/Disaster-Bolt-icon.png';
+      return 'http://icons.iconarchive.com/icons/custom-icon-design/flatastic-9/24/Warning-icon.png';
     }
   }
 
