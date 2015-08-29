@@ -46,4 +46,13 @@ app.get('/api/getTweets', function (req, res) {
   });
 });
 
+app.get('/api/getCrimeTweets', function (req, res) {
+  client.get('search/tweets', { q: 'crimes news' }, function(error, tweets, response) {
+    if (error) {
+      res.send({error: error});
+    } else {
+      res.send(tweets);
+    }
+  });
+});
 app.listen(process.env.PORT || 3000);

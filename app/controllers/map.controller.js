@@ -137,7 +137,7 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
         dataFetchers.push($scope.fetchDisasterTweets(query, d.users, d.type));
       }
     });
-
+    dataFetchers.push($scope.fetchCrimeTweets('crime'));
     dataFetchers.push($scope.fetchDisasters());
 
     $q.all(dataFetchers).then( function () {
@@ -151,6 +151,7 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
   $scope.fetchDisasterTweets = function (query, users, type) {
     return DisasterTweets.fetchTweets(query, users).
       then(function (response) {
+        var tempTweets = [];
         _.each(response.data.statuses, function (res) {
           var tweet = _.pick(res,'created_at','text','user','geo','coordinates','place','entities');
 
@@ -158,10 +159,11 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
           if (tweet.entities.hashtags.length > 0) { tweet.entities.hashtags = _.uniq(res.entities.hashtags, 'text'); }
           tweet.type = type;
 
+          tempTweets.push(tweet);
           $scope.data.tweets.push(tweet);
         });
 
-        var events = _.map($scope.data.tweets, function (res) {
+        var events = _.map(tempTweets, function (res) {
           if(res.coordinates) {
             return {
               id: uuid.v4(),
@@ -190,8 +192,58 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
       }).catch(function (err) {
         console.log(err);
       });
+
+
   };
 
+  $scope.fetchCrimeTweets = function (type) {
+    console.log('fetchCrimeTweets')
+    return DisasterTweets.crimeTweets()
+      .then(function(response) {
+        var tempTweets = [];
+        _.each(response.data.statuses, function (res) {
+          var tweet = _.pick(res,'created_at','text','user','geo','coordinates','place','entities');
+
+          tweet.created_at = moment(res.created_at).format('MMM D, YYYY h:mm a');
+          if (tweet.entities.hashtags.length > 0) { tweet.entities.hashtags = _.uniq(res.entities.hashtags, 'text'); }
+          tweet.type = type;
+
+          tempTweets.push(tweet);
+          $scope.data.tweets.push(tweet);
+        });
+        var events = _.map(tempTweets, function (res) {
+          if(res.coordinates) {
+            return {
+              id: uuid.v4(),
+              'coords': {
+                "latitude": res.coordinates.coordinates[1],
+                "longitude": res.coordinates.coordinates[0]
+              },
+              options: {
+                dragable: false,
+                icon: {
+                  url: getIcon({ code: type })
+                }
+              },
+              data:  {
+                name: angular.isDefined(res.entities) && angular.isDefined(res.entities.hashtags) && !angular.equals(res.entities.hashtags,[]) ? res.entities.hashtags[0].text : type,
+                type: type,
+                description: res.text,
+                location: 'Tempory Cat Country',
+                date: res.created_at
+              }
+            };
+          }
+        });
+        $scope.data.events = $scope.data.events.concat(events);
+        $scope.data.events = _.compact($scope.data.events);
+        console.log('!!!!')
+        console.log(events);
+      })
+      .catch(function(err) {
+        console.log(err);  
+      });
+  };
   $scope.fetchDisasters = function() {
     return disasterService.getDisasters().then(function(res) {
       var disasters = _.chain(res.data)
