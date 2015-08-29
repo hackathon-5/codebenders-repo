@@ -3,3 +3,10 @@
 }
 
 .angular-google-map-container { height: 400px; }
+
+body {
+  background-size: contain;
+  background-image: url("/../images/shield_of_captain_america.jpg");
+  background-position:center;
+}
+
