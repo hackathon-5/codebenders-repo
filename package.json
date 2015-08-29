@@ -25,6 +25,9 @@
     "bootstrap": "^3.3.5",
     "brfs": "^1.4.1",
     "express": "^4.13.3",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "twit": "^2.1.0",
     "twitter": "^1.2.5",
     "underscore": "^1.8.3"
   }

@@ -1,1 +1,18 @@
-<h1>hello {{bar}}</h1>
+<div class="jumbotron">
+  <h1>Disaster News</h1>
+  <p>The latest breaking news in disasters around the world.</p>
+
+  <div ng-show="loading">Loading...</div>
+  <div class="container" ng-hide="loading">
+    <div class="panel panel-primary" ng-repeat="tweet in data.tweets">
+      <div class="panel-heading"><strong>{{tweet.user.name}}</strong> (@{{tweet.user.screen_name}})</div>
+      <div class="panel-body">
+        <div>{{tweet.text}}</div>
+        <div ng-show="tweet.entities.hashtags.length > 0">* <span ng-repeat="hashtag in tweet.entities.hashtags">
+          <strong><a href="https://twitter.com/search?q={{hashtag.text}}">{{hashtag.text}}</a> * </strong>
+        </span></div>
+        <div>{{tweet.created_at | date:'MMM d, y h:mm:ss a'}}</div>
+      </div>
+    </div>
+  </div>
+</div>

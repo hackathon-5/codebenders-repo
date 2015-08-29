@@ -1,4 +1,5 @@
 require('angular');
 require('angular-ui-router/release/angular-ui-router.min.js');
 angular.module('DisasterApp', ['ui.router'])
-  .config(require('./states.js'));
+  .config(require('./states.js'))
+  .factory('DisasterTweets', require('./services/twitter.service'));
