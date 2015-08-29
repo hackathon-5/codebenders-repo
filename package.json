@@ -1,0 +1,19 @@
+{
+  "name": "codebenders-repo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hackathon-5/codebenders-repo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hackathon-5/codebenders-repo/issues"
+  },
+  "homepage": "https://github.com/hackathon-5/codebenders-repo#readme"
+}
