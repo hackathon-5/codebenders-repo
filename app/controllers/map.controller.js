@@ -35,7 +35,7 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
     tweets: []
   };
 
-  $scope.map = {center: {latitude: 40.1451, longitude: -99.6680 }, zoom: 4 };
+  $scope.map = {center: {latitude: 40.1451, longitude: -99.6680 }, zoom: 3 };
 
   function getIcon(type) {
     if (type.code === 'TC' || type.code === 'hurricane') {
