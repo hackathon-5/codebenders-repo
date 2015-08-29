@@ -2,11 +2,35 @@ var fs = require('fs');
 var _ = require('lodash');
 var rn = require('random-number');
 var gen = rn.generator({min: -10, max: 10 });
+var moment = require('moment');
 
-module.exports = function($scope, $modal, $templateCache, disasterService) {
-  
-  
-   $scope.map = {center: {latitude: 40.1451, longitude: -99.6680 }, zoom: 4 };
+module.exports = function($scope, $q, $modal, $templateCache, disasterService, DisasterTweets) {
+
+  $scope.loading = false;
+
+  $scope.disasters = [
+    {"type": "hurricane", "selected": true, "users": ["twc_hurricane","NHC_Atlantic","NHC_Pacific","NHC_Surge"]},
+    {"type": "earthquake", "selected": true, "users": ["USGSBigQuakes","USGSEarthquakes","USGSted","EQTW","NewEarthquake"]},
+    {"type": "wildfire", "selected": true, "users": ["wildfiretoday","pnw2","BCGovFireInfo","wildlandfirecom"]},
+    {"type": "flood", "selected": true, "users": ["FloodAlerts"]},
+    {"type": "tornado", "selected": true, "users": ["NWStornado","TWCBreaking","WarnTornado"]},
+    {"type": "tsunami", "selected": true, "users": ["Pacific","NWS_NTWC","NWS_PTWC","tsunamiwatch","EQTW","NewEarthquake"]}
+  ];
+
+  $scope.users = {
+    disaster_users: ["Disaster_Center"],
+    weather_users: ["wunderground","weatherchannel","NWS"],
+    location_users: ["LAFD",
+      "dunedinflood","kawarauflood","upperclutha","lowerclutha","taierifloodinfo","northotagoflood","ORCFloodInfo",
+      "NWSCharlestonSC"]
+  };
+
+  $scope.data = {
+    events: [],
+    tweets: []
+  };
+
+  $scope.map = {center: {latitude: 40.1451, longitude: -99.6680 }, zoom: 4 };
 
   function getIcon(type) {
     if (type.code === 'TC') {
@@ -38,7 +62,7 @@ module.exports = function($scope, $modal, $templateCache, disasterService) {
       return 'Severe Storm'
     } else {
       return 'Generic Disaster'
-    } 
+    }
   }
 
   disasterService.getDisasters().then(function(res) {
@@ -49,7 +73,7 @@ module.exports = function($scope, $modal, $templateCache, disasterService) {
           id: i,
           coords: {
             latitude: parseInt(disaster.location.lat, 10) + gen(),
-            longitude: parseInt(disaster.location.long, 10) + gen() 
+            longitude: parseInt(disaster.location.long, 10) + gen()
           },
           options: {
             dragable: false,
@@ -63,7 +87,7 @@ module.exports = function($scope, $modal, $templateCache, disasterService) {
             description: disaster.description,
             location: disaster.location.country,
             date: disaster.date
-          }  
+          }
         }
       })
       .value();
@@ -72,7 +96,7 @@ module.exports = function($scope, $modal, $templateCache, disasterService) {
       // $scope.type = 'flood';
       // $scope.description = "Prolonged torrential rains caused a number of floods and mudslides between 11 and 13 May 2015 in Khatlon province and Hoit administrative center of the Rasht valley of Tajikistan. According to the rapid assessment results received from the Committee of Emergency Situations and Civil Defense and the Red Crescent Society of Tajikistan, 296 families (1,776 people) were severely affected. Most of the houses were heavily damaged and rendered unusable. Roads, bridges, schools, agricultural fields, family plots and four schools were also affected and destroyed. The affected population urgently needs shelter, food, hygiene and sanitation, drinking water and household appliances.";
       // $scope.location = "USA";
-      // $scope.date = '08/23/2015';  
+      // $scope.date = '08/23/2015';
     console.log("$scope.markers:", $scope.markers);
 
   });
@@ -124,13 +148,13 @@ module.exports = function($scope, $modal, $templateCache, disasterService) {
    //    }
    //  },
    //  {
-      
+
    //    id: 1,
    //    coords: {
    //      latitude: 42.1451,
    //      longitude: -99.6680
    //    },
-   //    options: { 
+   //    options: {
    //      draggable: false,
    //      icon: {
    //        // tornado
@@ -146,7 +170,7 @@ module.exports = function($scope, $modal, $templateCache, disasterService) {
    //      latitude: 32.1451,
    //      longitude: -95.6680
    //    },
-   //    options: { 
+   //    options: {
    //      draggable: false,
    //      icon: {
    //        // flood
@@ -154,7 +178,7 @@ module.exports = function($scope, $modal, $templateCache, disasterService) {
    //      },
    //    },
    //    title: 'foo'
-      
+
    //  },
    //  {
    //    // this can be html link
@@ -164,7 +188,7 @@ module.exports = function($scope, $modal, $templateCache, disasterService) {
    //      latitude: 35.1451,
    //      longitude: -99.6680
    //    },
-   //    options: { 
+   //    options: {
    //      draggable: false,
    //      icon: {
    //        //earth quake
@@ -172,6 +196,61 @@ module.exports = function($scope, $modal, $templateCache, disasterService) {
    //      },
    //    },
    //    title: 'foo'
-      
+
    //  },];
+  $scope.getData = function () {
+    $scope.data.events = [];
+    $scope.data.tweets = [];
+    $scope.loading = true;
+    var dataFetchers = [];
+
+    dataFetchers.push($scope.fetchDisasterTweets($scope.users.disaster_users, 'general'));
+
+    _.each($scope.disasters, function (d) {
+      if (d.selected === true) {
+        dataFetchers.push($scope.fetchDisasterTweets(d.users, d.type));
+      }
+    });
+
+    $q.all(dataFetchers).then( function () {
+      $scope.data.tweets = _.sortBy($scope.data.tweets, 'created_at').reverse();
+      $scope.loading = false;
+    }, function () {
+      $scope.loading = false;
+    });
+  };
+
+  $scope.fetchDisasterTweets = function (users, type) {
+    return DisasterTweets.fetchTweets(users).
+      then(function (response) {
+        _.each(response.data.statuses, function (res) {
+          var tweet = _.pick(res,'created_at','text','user','geo','coordinates','place','entities');
+
+          tweet.created_at = moment(res.created_at).format('MMM D, YYYY h:mm a');
+          if (tweet.entities.hashtags.length > 0) { tweet.entities.hashtags = _.uniq(res.entities.hashtags, 'text'); }
+          tweet.type = type;
+
+          $scope.data.tweets.push(tweet);
+        });
+
+        var events = _.map(response, function (res) {
+          return {
+            "name": angular.isDefined(res.entities) && angular.isDefined(res.entities.hashtags) && !angular.equals(res.entities.hashtags,[]) ? res.entities.hashtags[0].text : type,
+            "description": res.text,
+            "date": moment(res.created_at),
+            "type": type,
+            "location": {
+              "lat": angular.isDefined(res.coordinates) && angular.isDefined(res.coordinates.coordinates) ? res.coordinates.coordinates[1] : null,
+              "long": angular.isDefined(res.coordinates) && angular.isDefined(res.coordinates.coordinates) ? res.coordinates.coordinates[0] : null
+            }
+          };
+        });
+        $scope.data.events.push(event);
+
+      }).catch(function (err) {
+        console.log(err);
+      });
+  };
+
+  $scope.getData();
 };

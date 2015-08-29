@@ -1,6 +1,33 @@
 <div class="container">
+  <div class="jumbotron col-md-12" style="padding-top: 10px;">
+    <h1>Disaster News</h1>
+    <p>The latest breaking news in disasters around the world.</p>
+  </div>
+
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-md-12">
+      <div class="panel panel-success">
+        <div class="panel panel-heading">
+          <h4>Filter by type of disaster</h4>
+        </div>
+        <div class="panel panel-body">
+          <div>
+            <span ng-repeat="d in disasters" class="col-xs-2">
+              <label class="checkbox-inline">
+                <input type="checkbox" name="disasterSelections" ng-model="d.selected"> {{d.type | capitalize}}
+              </label>
+            </span>
+          </div>
+          <div>
+            <button class="btn btn-success pull-right" ng-click="getData()">Filter Disasters</button>
+         </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
       <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options">
         <div ng-repeat="marker in markers">
           <ui-gmap-marker coords="marker.coords" options="marker.options" events="marker.events" idkey="marker.id" click="clickMarker(marker.data)">
@@ -8,7 +35,26 @@
         </div>
       </ui-gmap-google-map>
     </div>
-    
+  </div>
+  <br />
+  <br />
 
+  <div class="row" ng-hide="loading">
+    <div class="col-sm-12">
+      <div class="panel panel-primary" ng-repeat="tweet in data.tweets">
+        <div class="panel-heading">
+          <strong>{{tweet.user.name}}</strong> (@{{tweet.user.screen_name}})
+          <span class="pull-right">{{tweet.type | capitalize}}</span>
+        </div>
+        <div class="panel-body">
+          <div>{{tweet.text}}</div>
+          <div ng-show="tweet.entities.hashtags.length > 0">* <span ng-repeat="hashtag in tweet.entities.hashtags">
+            <strong><a href="https://twitter.com/hashtag/{{hashtag.text}}">{{hashtag.text}}</a> * </strong>
+          </span></div>
+          <div class="pull-right" ng-show="tweet.coordinates != null"><strong>Location: </strong>{{tweet.coordinates.coordinates[0]}} x {{tweet.coordinates.coordinates[1]}}</div>
+          <div>{{tweet.created_at | date:'MMM d, y h:mm:ss a'}}</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
