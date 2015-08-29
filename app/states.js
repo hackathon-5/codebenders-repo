@@ -17,6 +17,5 @@ module.exports = function($stateProvider, $urlRouterProvider) {
       url: '/map',
       template: fs.readFileSync(__dirname + '/views/map_view.html', 'utf-8'),
       controller: require('./controllers/map.controller.js')
-    })
-    ;
+    });
 };

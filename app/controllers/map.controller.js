@@ -1,7 +1,13 @@
-module.exports = function($scope, $modal) {
+var fs = require('fs');
+
+module.exports = function($scope, $modal, $templateCache) {
   
   
    $scope.map = {center: {latitude: 40.1451, longitude: -99.6680 }, zoom: 4 };
+
+   getEvents = function() {
+
+   }
 
    // earthquake
    // http://icons.iconarchive.com/icons/icons8/ios7/24/Weather-Earthquakes-icon.png
@@ -18,9 +24,18 @@ module.exports = function($scope, $modal) {
   $scope.clickMarker = function() {
     $modal.open({
       controller: require('./markerModal.controller.js'),
-      template: '<div>hello world</div>'
+      template: $templateCache.get('markerModal_view.html'),
+      resolve: {
+        items: function () {
+          return $scope.markers;
+        }
+      }
     })
   }
+
+  // need a way to fetch markers via api or whatevs
+
+
 
 
    $scope.markers = [{
@@ -28,10 +43,10 @@ module.exports = function($scope, $modal) {
       id: 0,
       coords: {
         // want to read these in from api service
-        latitude: 40.1451,
-        longitude: -99.6680
+        latitude: 18.85,
+        longitude: -70.11
       },
-      options: { 
+      options: {
         draggable: false,
         icon: {
           // fire
@@ -56,7 +71,7 @@ module.exports = function($scope, $modal) {
     },
     {
       // this can be html link
-      id: 0,
+      id: 2,
       coords: {
         // want to read these in from api service
         latitude: 32.1451,
@@ -74,7 +89,7 @@ module.exports = function($scope, $modal) {
     },
     {
       // this can be html link
-      id: 0,
+      id: 3,
       coords: {
         // want to read these in from api service
         latitude: 35.1451,
