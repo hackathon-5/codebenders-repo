@@ -164,7 +164,7 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
         data:  {
           name: "Jack Russell Software, the best workplace on Earth",
           type: "JRS",
-          description: 'Apply Now! http://www.carekinesis.com/careers/',
+          description: 'Apply Now to work it the greatest city EVER!! http://www.carekinesis.com/careers/',
           location: 'Charleston, SC, USA',
           date: moment().format('MMM D, YYYY h:mm a')
         }
