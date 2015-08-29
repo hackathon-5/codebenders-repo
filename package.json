@@ -28,9 +28,9 @@
     "bootstrap": "^3.3.5",
     "brfs": "^1.4.1",
     "express": "^4.13.3",
-    "lodash": "^3.10.1",
-    "twitter": "^1.2.5",
     "firebase": "^2.2.9",
+    "lodash": "^3.10.1",
+    "request": "^2.61.0",
     "twitter": "^1.2.5",
     "underscore": "^1.8.3"
   }
