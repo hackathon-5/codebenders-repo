@@ -2,8 +2,9 @@ var fs = require('fs');
 var _ = require('lodash');
 var moment = require('moment');
 var rn = require('random-number');
-var gen = rn.generator({min: -.1, max: .1 });
+var gen = rn.generator({min: -0.1, max: 0.1 });
 var moment = require('moment');
+var uuid = require('uuid');
 
 module.exports = function($scope, $q, $modal, $templateCache, disasterService, DisasterTweets) {
 
@@ -78,41 +79,6 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
     }
   }
 
-  $scope.getDisasters = function () {
-    return disasterService.getDisasters().then(function (res) {
-      $scope.markers = _.chain(res.data)
-        .filter(function(x) {
-          return moment(x.date).isAfter('2015-01-01');
-        })
-        .filter(function (disaster) {
-          return _.result(_.findWhere($scope.disasters, { 'type': getType(disaster.type) }), 'selected') === true ? true : false;
-        })
-        .map(function (disaster, i) {
-          return {
-            id: i,
-            coords: {
-              latitude: parseInt(disaster.location.lat, 10) + gen(),
-              longitude: parseInt(disaster.location.long, 10) + gen()
-            },
-            options: {
-              dragable: false,
-              icon: {
-                url: getIcon(disaster.type)
-              }
-            },
-            data:  {
-              name: disaster.name,
-              type: getType(disaster.type),
-              description: disaster.description,
-              location: disaster.location.country,
-              date: disaster.date
-            }
-          };
-        })
-        .value();
-    });
-  };
-
    // earthquake
    // http://icons.iconarchive.com/icons/icons8/ios7/24/Weather-Earthquakes-icon.png
 
@@ -146,13 +112,13 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
     $scope.loading = true;
     var dataFetchers = [];
 
-    dataFetchers.push($scope.getDisasters());
-
     _.each($scope.disasters, function (d) {
       if (d.selected === true && !angular.equals(d.users,[])) {
         dataFetchers.push($scope.fetchDisasterTweets(query, d.users, d.type));
       }
     });
+
+    dataFetchers.push($scope.fetchDisasters());
 
     $q.all(dataFetchers).then( function () {
       $scope.data.tweets = _.sortBy($scope.data.tweets, 'created_at').reverse();
@@ -175,33 +141,72 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
           $scope.data.tweets.push(tweet);
         });
 
-        var events = _.map(response, function (res) {
-          return {
-            "name": angular.isDefined(res.entities) && angular.isDefined(res.entities.hashtags) && !angular.equals(res.entities.hashtags,[]) ? res.entities.hashtags[0].text : type,
-            "description": res.text,
-            "date": moment(res.created_at),
-            "type": type,
-            "location": {
-              "lat": angular.isDefined(res.coordinates) && angular.isDefined(res.coordinates.coordinates) ? res.coordinates.coordinates[1] : null,
-              "long": angular.isDefined(res.coordinates) && angular.isDefined(res.coordinates.coordinates) ? res.coordinates.coordinates[0] : null
-            }
-          };
+        var events = _.map($scope.data.tweets, function (res) {
+          if(res.coordinates) {
+            return {
+              id: uuid.v4(),
+              'coords': {
+                "latitude": res.coordinates.coordinates[1],
+                "longitude": res.coordinates.coordinates[0]
+              },
+              options: {
+                dragable: false,
+                icon: {
+                  url: getIcon({ code: type })
+                }
+              },
+              data:  {
+                name: angular.isDefined(res.entities) && angular.isDefined(res.entities.hashtags) && !angular.equals(res.entities.hashtags,[]) ? res.entities.hashtags[0].text : type,
+                type: type,
+                description: res.text,
+                location: 'Tempory Cat Country',
+                date: res.created_at
+              }
+            };
+          }
         });
-        $scope.data.events.push(event);
-
+        $scope.data.events = $scope.data.events.concat(events);
+        $scope.data.events = _.compact($scope.data.events);
       }).catch(function (err) {
         console.log(err);
       });
   };
 
-  $scope.getData();
+  $scope.fetchDisasters = function() {
+    return disasterService.getDisasters().then(function(res) {
+      var disasters = _.chain(res.data)
+        .filter(function(x) {
+          return moment(x.date).isAfter('2014-01-01');
+        })
+        .filter(function (disaster) {
+          return _.result(_.findWhere($scope.disasters, { 'type': getType(disaster.type) }), 'selected') === true ? true : false;
+        })
+        .map(function(disaster, i) {
+          return {
+            id: i,
+            coords: {
+              latitude: parseInt(disaster.location.lat, 10) + gen(),
+              longitude: parseInt(disaster.location.long, 10) + gen()
+            },
+            options: {
+              dragable: false,
+              icon: {
+                url: getIcon(disaster.type)
+              }
+            },
+            data:  {
+              name: disaster.name,
+              type: getType(disaster.type),
+              description: disaster.description,
+              location: disaster.location.country,
+              date: disaster.date
+            }
+          };
+        })
+        .value();
+      $scope.data.events = $scope.data.events.concat(disasters);
+    });
+  };
 
-  // $scope.$watchGroup(disasters, function(n, o) {
-  //   console.log("n:", n);
-  //   console.log("o:", o);
-  //   if(n != o) {
-  //     console.log("something changed:");
-  //     $scope.getData();
-  //   }
-  // });
+  $scope.getData();
 };

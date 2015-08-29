@@ -29,7 +29,7 @@
   <div class="row">
     <div class="col-md-12">
       <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options">
-        <div ng-repeat="marker in markers track by marker.id">
+        <div ng-repeat="marker in data.events">
           <ui-gmap-marker coords="marker.coords" options="marker.options" events="marker.events" idkey="marker.id" click="clickMarker(marker.data)">
           </ui-gmap-marker>
         </div>
