@@ -24,5 +24,6 @@ app.get('/api/disasters', function(req, res) {
       })
       .value();
     res.send(data);     
+  });
 });
 app.listen(process.env.PORT || 3000);
