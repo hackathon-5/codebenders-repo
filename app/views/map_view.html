@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="jumbotron col-md-12" style="padding-top: 10px;">
+  <div class="jumbotron col-md-12" style="padding-top: 10px; padding-bottom: 10px; margin-bottom:20px;">
     <h1>Disaster News</h1>
     <p>The latest breaking news in disasters around the world.</p>
   </div>
@@ -29,7 +29,7 @@
   <div class="row">
     <div class="col-md-12">
       <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options">
-        <div ng-repeat="marker in markers">
+        <div ng-repeat="marker in markers track by marker.id">
           <ui-gmap-marker coords="marker.coords" options="marker.options" events="marker.events" idkey="marker.id" click="clickMarker(marker.data)">
           </ui-gmap-marker>
         </div>

@@ -15,16 +15,19 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
     {"type": "wildfire", "selected": true, "users": ["wildfiretoday","pnw2","BCGovFireInfo","wildlandfirecom"]},
     {"type": "flood", "selected": true, "users": ["FloodAlerts"]},
     {"type": "tornado", "selected": true, "users": ["NWStornado","TWCBreaking","WarnTornado"]},
-    {"type": "tsunami", "selected": true, "users": ["Pacific","NWS_NTWC","NWS_PTWC","tsunamiwatch","EQTW","NewEarthquake"]}
+    {"type": "tsunami", "selected": true, "users": ["Pacific","NWS_NTWC","NWS_PTWC","tsunamiwatch","EQTW","NewEarthquake"]},
+    {"type": "cold wave", "selected": true, "users": []},
+    {"type": "flood", "selected": true, "users": []},
+    {"type": "severe storm", "selected": true, "users": []},
+    {"type": "generic disaster", "selected": true, "users": ["Disaster_Center"]}
   ];
 
-  $scope.users = {
-    disaster_users: ["Disaster_Center"],
-    weather_users: ["wunderground","weatherchannel","NWS"],
-    location_users: ["LAFD",
-      "dunedinflood","kawarauflood","upperclutha","lowerclutha","taierifloodinfo","northotagoflood","ORCFloodInfo",
-      "NWSCharlestonSC"]
-  };
+  // $scope.users = {
+  //   weather_users: ["wunderground","weatherchannel","NWS"],
+  //   location_users: ["LAFD",
+  //     "dunedinflood","kawarauflood","upperclutha","lowerclutha","taierifloodinfo","northotagoflood","ORCFloodInfo",
+  //     "NWSCharlestonSC"]
+  // };
 
   $scope.data = {
     events: [],
@@ -43,67 +46,69 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
     } else if (type.code === ('FL' || 'FF')) {
       return 'http://icons.iconarchive.com/icons/icons8/ios7/24/Weather-Floods-icon.png';
     } else if (type.code === 'ST') {
-      return 'http://icons.iconarchive.com/icons/icons8/windows-8/48/Weather-Storm-icon.png'
+      return 'http://icons.iconarchive.com/icons/icons8/windows-8/48/Weather-Storm-icon.png';
     } else {
-      return 'http://icons.iconarchive.com/icons/aha-soft/free-3d-glossy/48/Disaster-Bolt-icon.png'
+      return 'http://icons.iconarchive.com/icons/aha-soft/free-3d-glossy/48/Disaster-Bolt-icon.png';
     }
-
   }
 
   function getType(type) {
     if (type.code === 'TC') {
-      return 'Hurricane';
+      return 'hurricane';
     } else if (type.code === 'VO') {
-      return 'Volcano';
+      return 'volcano';
     } else if (type.code === 'CW') {
-      return 'Cold Wave';
+      return 'cold wave';
     } else if (type.code === ('FL' || 'FF')) {
-      return 'Flood';
+      return 'flood';
     } else if (type.code === 'ST') {
-      return 'Severe Storm'
+      return 'severe storm';
     } else {
-      return 'Generic Disaster'
+      return 'generic disaster';
     }
   }
 
-  disasterService.getDisasters().then(function(res) {
-    console.log("res.data:", res.data);
-    $scope.markers = _.chain(res.data)
-      .filter(function(x) {
-        return moment(x.date).isAfter('2015-01-01');
-      })
-      .map(function(disaster, i) {
-        return {
-          id: i,
-          coords: {
-            latitude: parseInt(disaster.location.lat, 10) + gen(),
-            longitude: parseInt(disaster.location.long, 10) + gen()
-          },
-          options: {
-            dragable: false,
-            icon: {
-              url: getIcon(disaster.type)
+  $scope.getDisasters = function () {
+    return disasterService.getDisasters().then(function (res) {
+      $scope.markers = _.chain(res.data)
+        .filter(function(x) {
+          return moment(x.date).isAfter('2015-01-01');
+        })
+        .filter(function (disaster) {
+          return _.result(_.findWhere($scope.disasters, { 'type': getType(disaster.type) }), 'selected') === true ? true : false;
+        })
+        .map(function (disaster, i) {
+          return {
+            id: i,
+            coords: {
+              latitude: parseInt(disaster.location.lat, 10) + gen(),
+              longitude: parseInt(disaster.location.long, 10) + gen()
+            },
+            options: {
+              dragable: false,
+              icon: {
+                url: getIcon(disaster.type)
+              }
+            },
+            data:  {
+              name: disaster.name,
+              type: getType(disaster.type),
+              description: disaster.description,
+              location: disaster.location.country,
+              date: disaster.date
             }
-          },
-          data:  {
-            name: disaster.name,
-            type: getType(disaster.type),
-            description: disaster.description,
-            location: disaster.location.country,
-            date: disaster.date
-          }
-        }
-      })
-      .value();
+          };
+        })
+        .value();
+    });
 
-      // $scope.name = 'foo';
-      // $scope.type = 'flood';
-      // $scope.description = "Prolonged torrential rains caused a number of floods and mudslides between 11 and 13 May 2015 in Khatlon province and Hoit administrative center of the Rasht valley of Tajikistan. According to the rapid assessment results received from the Committee of Emergency Situations and Civil Defense and the Red Crescent Society of Tajikistan, 296 families (1,776 people) were severely affected. Most of the houses were heavily damaged and rendered unusable. Roads, bridges, schools, agricultural fields, family plots and four schools were also affected and destroyed. The affected population urgently needs shelter, food, hygiene and sanitation, drinking water and household appliances.";
-      // $scope.location = "USA";
-      // $scope.date = '08/23/2015';
-    console.log("$scope.markers:", $scope.markers);
+    // $scope.name = 'foo';
+    // $scope.type = 'flood';
+    // $scope.description = "Prolonged torrential rains caused a number of floods and mudslides between 11 and 13 May 2015 in Khatlon province and Hoit administrative center of the Rasht valley of Tajikistan. According to the rapid assessment results received from the Committee of Emergency Situations and Civil Defense and the Red Crescent Society of Tajikistan, 296 families (1,776 people) were severely affected. Most of the houses were heavily damaged and rendered unusable. Roads, bridges, schools, agricultural fields, family plots and four schools were also affected and destroyed. The affected population urgently needs shelter, food, hygiene and sanitation, drinking water and household appliances.";
+    // $scope.location = "USA";
+    // $scope.date = '08/23/2015';
 
-  });
+  };
 
    // earthquake
    // http://icons.iconarchive.com/icons/icons8/ios7/24/Weather-Earthquakes-icon.png
@@ -118,7 +123,6 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
    // http://icons.iconarchive.com/icons/icons8/windows-8/24/Weather-Tornado-icon.png
 
   $scope.clickMarker = function(marker) {
-    console.log("marker:", marker);
     $modal.open({
       controller: require('./markerModal.controller.js'),
       template: $templateCache.get('markerModal_view.html'),
@@ -127,8 +131,8 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
           return marker;
         }
       }
-    })
-  }
+    });
+  };
 
   // need a way to fetch markers via api or whatevs
 
@@ -202,17 +206,19 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
    //    title: 'foo'
 
    //  },];
-  $scope.getData = function () {
+  $scope.getData = function (query) {
+    if (query === null) { query=""; }
+
     $scope.data.events = [];
     $scope.data.tweets = [];
     $scope.loading = true;
     var dataFetchers = [];
 
-    dataFetchers.push($scope.fetchDisasterTweets($scope.users.disaster_users, 'general'));
+    dataFetchers.push($scope.getDisasters());
 
     _.each($scope.disasters, function (d) {
-      if (d.selected === true) {
-        dataFetchers.push($scope.fetchDisasterTweets(d.users, d.type));
+      if (d.selected === true && !angular.equals(d.users,[])) {
+        dataFetchers.push($scope.fetchDisasterTweets(query, d.users, d.type));
       }
     });
 
@@ -224,8 +230,8 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
     });
   };
 
-  $scope.fetchDisasterTweets = function (users, type) {
-    return DisasterTweets.fetchTweets(users).
+  $scope.fetchDisasterTweets = function (query, users, type) {
+    return DisasterTweets.fetchTweets(query, users).
       then(function (response) {
         _.each(response.data.statuses, function (res) {
           var tweet = _.pick(res,'created_at','text','user','geo','coordinates','place','entities');

@@ -2,8 +2,8 @@
 module.exports = ['$http', '$q', function ($http, $q) {
 
   return {
-    fetchTweets: function (users) {
-      var params = "from:" + users.join(", OR from:");
+    fetchTweets: function (query, users) {
+      var params = query+"from:" + users.join(", OR from:");
 
       return $http.get('/api/getTweets', {params: {from: params}});
     }
