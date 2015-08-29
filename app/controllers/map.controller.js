@@ -9,6 +9,7 @@ var uuid = require('uuid');
 module.exports = function($scope, $q, $modal, $templateCache, disasterService, DisasterTweets) {
 
   $scope.loading = false;
+  $scope.query = "";
 
   $scope.disasters = [
     {"type": "hurricane", "selected": true, "users": ["twc_hurricane","NHC_Atlantic","NHC_Pacific","NHC_Surge"]},
@@ -125,7 +126,7 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
   };
 
   $scope.getData = function (query) {
-    if (query === null) { query=""; }
+    if (query === null || angular.isUndefined(query)) { query=""; } else { query += " "; }
 
     $scope.data.events = [];
     $scope.data.tweets = [];
@@ -166,8 +167,8 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
             return {
               id: uuid.v4(),
               'coords': {
-                "latitude": res.coordinates.coordinates[1],
-                "longitude": res.coordinates.coordinates[0]
+                "latitude": parseInt(res.coordinates.coordinates[1], 10) + gen(),
+                "longitude": parseInt(res.coordinates.coordinates[0], 10) + gen()
               },
               options: {
                 dragable: false,
@@ -200,6 +201,11 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
         })
         .filter(function (disaster) {
           return _.result(_.findWhere($scope.disasters, { 'type': getType(disaster.type) }), 'selected') === true ? true : false;
+        })
+        .filter(function (disaster) {
+          if (query !== null && angular.isDefined(query) && query !== "") {
+            return _.contains(disaster.name, query);
+          }
         })
         .map(function(disaster, i) {
           return {

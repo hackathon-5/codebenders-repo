@@ -11,16 +11,24 @@
           <h4>Filter by type of disaster</h4>
         </div>
         <div class="panel-body">
-          <div>
+          <div class="row">
             <span ng-repeat="d in disasters" class="col-xs-6 col-sm-4 col-md-2">
               <label class="checkbox-inline">
                 <input type="checkbox" name="disasterSelections" ng-model="d.selected" ng-change="getData()"> {{d.type | capitalize}}
               </label>
             </span>
           </div>
-          <!-- <div>
-            <button class="btn btn-success btn-xs pull-right" ng-click="getData()">Filter Disasters</button>
-         </div> -->
+          <br />
+          <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search keywords" ng-model="query">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" ng-click="getData(query)">Search</button>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
