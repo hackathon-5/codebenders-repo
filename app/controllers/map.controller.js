@@ -66,7 +66,7 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
       return 'hurricane';
     } else if (type.code === 'VO') {
       return 'volcano';
-    } else if (type.code === 'WF') {
+    } else if (type.code === ('WF' || 'FR')) {
       return 'wild fire';
     } else if (type.code === 'CW') {
       return 'cold wave';
@@ -76,6 +76,24 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
       return "earthquake";
     } else if (type.code === 'ST') {
       return 'severe storm';
+    } else if (type.code === 'DR') {
+      return 'drought';
+    } else if (type.code === 'EP') {
+      return 'epidemic';
+    } else if (type.code === 'HT') {
+      return 'heat wave';
+    } else if (type.code === 'IN') {
+      return 'insects';
+    } else if (type.code === 'LS') {
+      return 'landslide';
+    } else if (type.code === 'AV') {
+      return 'avalanche';
+    } else if (type.code === 'SS') {
+      return 'storm surge';
+    } else if (type.code === 'AC') {
+      return 'technological';
+    } else if (type.code === 'TS') {
+      return 'tsunami';
     } else {
       return 'generic disaster';
     }
