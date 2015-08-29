@@ -14,7 +14,7 @@ var client = new Twitter({
 app.use(express.static(__dirname + '/../public', { index: 'index.html' }));
 
 app.get('/api/disasters', function(req, res) {
-  request.get('http://api.rwlabs.org:80/v1/disasters?limit=100&profile=full&preset=latest', { json: true }, function(e, r, b) {
+  request.get('http://api.rwlabs.org:80/v1/disasters?limit=500&profile=full&preset=latest', { json: true }, function(e, r, b) {
     if(e) { return res.status(500).send(e); }  
     var data = _.chain(b.data)
       .pluck('fields')

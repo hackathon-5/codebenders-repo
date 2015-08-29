@@ -1,5 +1,6 @@
 var fs = require('fs');
 var _ = require('lodash');
+var moment = require('moment');
 var rn = require('random-number');
 var gen = rn.generator({min: -10, max: 10 });
 var moment = require('moment');
@@ -68,6 +69,9 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
   disasterService.getDisasters().then(function(res) {
     console.log("res.data:", res.data);
     $scope.markers = _.chain(res.data)
+      .filter(function(x) {
+        return moment(x.date).isAfter('2015-01-01');
+      })
       .map(function(disaster, i) {
         return {
           id: i,
