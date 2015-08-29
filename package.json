@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify -t brfs -e app/app.js -o public/js/app.js && cp node_modules/bootstrap/dist/css/* public/css/",
+    "start": "node server/server.js",
+    "watch": "watchify -t brfs -e app/app.js -o public/js/app.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +18,12 @@
   "bugs": {
     "url": "https://github.com/hackathon-5/codebenders-repo/issues"
   },
-  "homepage": "https://github.com/hackathon-5/codebenders-repo#readme"
+  "homepage": "https://github.com/hackathon-5/codebenders-repo#readme",
+  "dependencies": {
+    "angular": "^1.4.5",
+    "angular-ui-router": "^0.2.15",
+    "bootstrap": "^3.3.5",
+    "express": "^4.13.3",
+    "underscore": "^1.8.3"
+  }
 }
