@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t brfs -e app/app.js -o public/js/app.js && cp node_modules/bootstrap/dist/css/* public/css/",
+    "build": "browserify -t brfs -e app/app.js -o public/js/app.js && cp node_modules/bootstrap/dist/css/* public/css/ && cp node_modules/firebase/lib/firebase-web.js public/js/firebase-web.js",
     "start": "node server/server.js",
     "watch": "watchify -t brfs -e app/app.js -o public/js/app.js"
   },
@@ -24,10 +24,14 @@
     "angular-google-maps": "^2.1.5",
     "angular-ui-bootstrap": "^0.13.3",
     "angular-ui-router": "^0.2.15",
+    "angularfire": "^1.1.2",
     "bootstrap": "^3.3.5",
     "brfs": "^1.4.1",
     "express": "^4.13.3",
     "lodash": "^3.10.1",
-    "twitter": "^1.2.5"
+    "twitter": "^1.2.5",
+    "firebase": "^2.2.9",
+    "twitter": "^1.2.5",
+    "underscore": "^1.8.3"
   }
 }
