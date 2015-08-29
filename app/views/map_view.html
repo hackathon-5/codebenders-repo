@@ -14,13 +14,13 @@
           <div>
             <span ng-repeat="d in disasters" class="col-xs-2">
               <label class="checkbox-inline">
-                <input type="checkbox" name="disasterSelections" ng-model="d.selected"> {{d.type | capitalize}}
+                <input type="checkbox" name="disasterSelections" ng-model="d.selected" ng-change="getData()"> {{d.type | capitalize}}
               </label>
             </span>
           </div>
-          <div>
+          <!-- <div>
             <button class="btn btn-success btn-xs pull-right" ng-click="getData()">Filter Disasters</button>
-         </div>
+         </div> -->
         </div>
       </div>
     </div>

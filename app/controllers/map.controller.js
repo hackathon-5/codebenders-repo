@@ -2,7 +2,7 @@ var fs = require('fs');
 var _ = require('lodash');
 var moment = require('moment');
 var rn = require('random-number');
-var gen = rn.generator({min: -10, max: 10 });
+var gen = rn.generator({min: -.1, max: .1 });
 var moment = require('moment');
 
 module.exports = function($scope, $q, $modal, $templateCache, disasterService, DisasterTweets) {
@@ -195,4 +195,13 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
   };
 
   $scope.getData();
+
+  // $scope.$watchGroup(disasters, function(n, o) {
+  //   console.log("n:", n);
+  //   console.log("o:", o);
+  //   if(n != o) {
+  //     console.log("something changed:");
+  //     $scope.getData();
+  //   }
+  // });
 };
