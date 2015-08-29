@@ -1,1 +1,43 @@
-<h1>hello {{bar}}</h1>
+<div class="jumbotron">
+  <h1>Disaster News</h1>
+  <p>The latest breaking news in disasters around the world.</p>
+
+  <div class="container">
+    <div class="panel panel-default">
+      <div class="panel panel-heading">
+        <h3>Filter by type of disaster</h3>
+      </div>
+      <div class="panel panel-body">
+        <div class="form-group">
+          <span ng-repeat="d in disasters" class="col-xs-2">
+            <label class="checkbox-inline">
+              <input type="checkbox" name="disasterSelections" ng-model="d.selected"> {{d.type | capitalize}}
+            </label>
+          </span>
+        </div>
+        <br />
+        <div>
+          <button class="btn btn-success pull-right" ng-click="getData()">Filter Disasters</button>
+       </div>
+      </dov>
+    </div>
+  </div>
+
+  <div ng-show="loading">Loading...</div>
+  <div class="container" ng-hide="loading">
+    <div class="panel panel-primary" ng-repeat="tweet in data.tweets">
+      <div class="panel-heading">
+        <strong>{{tweet.user.name}}</strong> (@{{tweet.user.screen_name}})
+        <span class="pull-right">{{tweet.type | capitalize}}</span>
+      </div>
+      <div class="panel-body">
+        <div>{{tweet.text}}</div>
+        <div ng-show="tweet.entities.hashtags.length > 0">* <span ng-repeat="hashtag in tweet.entities.hashtags">
+          <strong><a href="https://twitter.com/hashtag/{{hashtag.text}}">{{hashtag.text}}</a> * </strong>
+        </span></div>
+        <div class="pull-right" ng-show="tweet.coordinates != null"><strong>Location: </strong>{{tweet.coordinates.coordinates[0]}} x {{tweet.coordinates.coordinates[1]}}</div>
+        <div>{{tweet.created_at | date:'MMM d, y h:mm:ss a'}}</div>
+      </div>
+    </div>
+  </div>
+</div>

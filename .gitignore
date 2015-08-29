@@ -1,6 +1,7 @@
 node_modules/*
 public/css/*
 public/js/*
+.env
 # Created by https://www.gitignore.io/api/vim
 
 ### Vim ###
