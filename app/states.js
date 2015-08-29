@@ -24,4 +24,5 @@ module.exports = function($stateProvider, $urlRouterProvider) {
       controller: require('./controllers/play.controller.js')
     })
     ;
+>>>>>>> master
 };

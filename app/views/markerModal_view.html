@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <div class="modal-title">
+    Disaster Stats
+  </div>
+</div>
+<div class="modal-body">
+  <table class="table table-stripped">
+    <thead>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Location</th>
+      <th>Description</th>
+      <th>Date</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{name}}</td>
+        <td>{{type}}</td>
+        <td>{{location}}</td>
+        <td>{{description}}</td>
+        <td>{{date}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="modal-footer">
+  <button ng-click="close()">
+    Close
+  </button>
+</div>

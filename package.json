@@ -21,11 +21,15 @@
   "homepage": "https://github.com/hackathon-5/codebenders-repo#readme",
   "dependencies": {
     "angular": "^1.4.5",
+    "angular-google-maps": "^2.1.5",
+    "angular-ui-bootstrap": "^0.13.3",
     "angular-ui-router": "^0.2.15",
     "angularfire": "^1.1.2",
     "bootstrap": "^3.3.5",
     "brfs": "^1.4.1",
     "express": "^4.13.3",
+    "lodash": "^3.10.1",
+    "twitter": "^1.2.5",
     "firebase": "^2.2.9",
     "twitter": "^1.2.5",
     "underscore": "^1.8.3"
