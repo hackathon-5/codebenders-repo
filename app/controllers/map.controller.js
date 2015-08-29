@@ -21,8 +21,10 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
     {"type": "severe storm", "selected": true, "users": []},
     {"type": "tornado", "selected": true, "users": ["NWStornado","TWCBreaking","WarnTornado"]},
     {"type": "tsunami", "selected": true, "users": ["Pacific","NWS_NTWC","NWS_PTWC","tsunamiwatch","EQTW","NewEarthquake"]},
-    {"type": "generic disaster", "selected": true, "users": ["Disaster_Center"]}
+    {"type": "generic disaster", "selected": true, "users": ["Disaster_Center","GEOcrisis"]}
   ];
+
+  $scope.hashtags = ["melawanasap","indonesiafires"];
 
   // $scope.users = {
   //   weather_users: ["wunderground","weatherchannel","NWS"],
@@ -53,10 +55,12 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
       return 'http://icons.iconarchive.com/icons/icons8/ios7/24/Weather-Earthquakes-icon.png';
     } else if (type.code === 'ST' || type.code === 'severe storm') {
       return 'http://icons.iconarchive.com/icons/icons8/windows-8/24/Weather-Storm-icon.png';
-    } else if (type == 'tornado') {
+    } else if (type.code === 'tornado') {
       return "http://icons.iconarchive.com/icons/icons8/windows-8/24/Weather-Tornado-icon.png";
     } else if(type.code === 'EP') {
-      return 'http://icons.iconarchive.com/icons/icons8/windows-8/24/Industry-Biohazard-icon.png'
+      return 'http://icons.iconarchive.com/icons/icons8/windows-8/24/Industry-Biohazard-icon.png';
+    } else if (type.code === "JRS") {
+      return "http://i.imgur.com/w8Cv2A8.png";
     } else {
       return 'http://icons.iconarchive.com/icons/custom-icon-design/flatastic-9/24/Warning-icon.png';
     }
@@ -95,6 +99,8 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
       return 'technological';
     } else if (type.code === 'TS') {
       return 'tsunami';
+    } else if (type.code === "JRS") {
+      return 'Tech Needed!';
     } else {
       return 'generic disaster';
     }
@@ -143,6 +149,26 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
 
     $q.all(dataFetchers).then( function () {
       $scope.data.tweets = _.sortBy($scope.data.tweets, 'created_at').reverse();
+      $scope.data.events.push({
+        id: uuid.v4(),
+        'coords': {
+          "latitude": 32.842179,
+          "longitude": -79.868966
+        },
+        options: {
+          dragable: false,
+          icon: {
+            url: getIcon({ code: "JRS" })
+          }
+        },
+        data:  {
+          name: "Jack Russell Software, the best workplace on Earth",
+          type: "JRS",
+          description: 'Apply Now! http://www.carekinesis.com/careers/',
+          location: 'Charleston, SC, USA',
+          date: moment().format('MMM D, YYYY h:mm a')
+        }
+      });
       $scope.loading = false;
     }, function () {
       $scope.loading = false;
@@ -238,11 +264,9 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
         });
         $scope.data.events = $scope.data.events.concat(events);
         $scope.data.events = _.compact($scope.data.events);
-        console.log('!!!!')
-        console.log(events);
       })
       .catch(function(err) {
-        console.log(err);  
+        console.log(err);
       });
   };
   $scope.fetchDisasters = function() {
@@ -255,8 +279,10 @@ module.exports = function($scope, $q, $modal, $templateCache, disasterService, D
           return _.result(_.findWhere($scope.disasters, { 'type': getType(disaster.type) }), 'selected') === true ? true : false;
         })
         .filter(function (disaster) {
-          if (query !== null && angular.isDefined(query) && query !== "") {
-            return _.contains(disaster.name, query);
+          if ($scope.query !== null && angular.isDefined($scope.query) && $scope.query !== "") {
+            return _.contains(disaster.name, $scope.query);
+          } else {
+            return true;
           }
         })
         .map(function(disaster, i) {
