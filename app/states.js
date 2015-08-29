@@ -2,7 +2,7 @@ var fs = require('fs');
 
 module.exports = function($stateProvider, $urlRouterProvider) {
   //change this
-  $urlRouterProvider.otherwise('/main');
+  $urlRouterProvider.otherwise('/main/map');
   $stateProvider
     .state('main', {
       url: '/main',
